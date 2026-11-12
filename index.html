@@ -4,10 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Les Os du Corps Humain 🦴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
-    font-family: 'Baloo 2', 'Comic Sans MS', 'Segoe UI', cursive, sans-serif;
+    font-family: 'Fredoka', 'Baloo 2', 'Comic Sans MS', 'Segoe UI', sans-serif;
     background: linear-gradient(160deg, #e8f4ff 0%, #fdeef7 50%, #fff7e0 100%);
     min-height: 100vh;
     color: #3c3c50;
@@ -376,10 +379,37 @@ function soundBad()  { tone(180, 0, .3, "sawtooth"); }
 function soundWin()  { [523,659,784,1047].forEach((f,i)=>tone(f, i*.12, .3)); }
 
 /* ---------- Voix ---------- */
+let frVoice = null;
+function pickVoice() {
+  try {
+    const voices = speechSynthesis.getVoices()
+      .filter(v => (v.lang || "").toLowerCase().startsWith("fr"));
+    if (!voices.length) { frVoice = null; return; }
+    const score = v => {
+      let s = 0;
+      const n = v.name.toLowerCase();
+      if (n.includes("google")) s += 10;
+      if (n.includes("natural") || n.includes("online")) s += 8;
+      if (n.includes("microsoft")) s += 6;
+      if (n.includes("premium") || n.includes("enh")) s += 5;
+      if (n.includes("espeak")) s -= 10;
+      if (v.localService === false) s += 2;
+      return s;
+    };
+    voices.sort((a, b) => score(b) - score(a));
+    frVoice = voices[0];
+  } catch (e) { frVoice = null; }
+}
+if (typeof speechSynthesis !== "undefined") {
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
 function speak(text) {
   try {
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = "fr-FR"; u.rate = 0.85;
+    if (frVoice) u.voice = frVoice;
+    u.lang = frVoice ? frVoice.lang : "fr-FR";
+    u.rate = 0.85; u.pitch = 1.05;
     speechSynthesis.cancel(); speechSynthesis.speak(u);
   } catch (e) {}
 }
