@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Os du Corps Humain 🦴</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Baloo 2', 'Comic Sans MS', 'Segoe UI', cursive, sans-serif;
+    background: linear-gradient(160deg, #e8f4ff 0%, #fdeef7 50%, #fff7e0 100%);
+    min-height: 100vh;
+    color: #3c3c50;
+    padding: 12px;
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    max-width: 1000px; margin: 0 auto 14px;
+    background: #fff; border-radius: 20px; padding: 12px 18px;
+    box-shadow: 0 4px 14px rgba(60,60,120,.12);
+  }
+  h1 { font-size: 1.5rem; color: #58cc02; }
+  h1 small { color: #8888a5; font-size: .9rem; display: block; }
+  .scorebar { display: flex; gap: 14px; align-items: center; font-weight: bold; font-size: 1.1rem; }
+  .pill { background: #fff3bf; border-radius: 999px; padding: 4px 14px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.08); }
+  .pill.xp { background: #fff3bf; }
+  .pill.flame { background: #ffe3e3; }
+  #resetBtn { background: none; border: none; font-size: 1.1rem; cursor: pointer; opacity: .5; }
+  #resetBtn:hover { opacity: 1; }
+
+  nav { display: flex; gap: 8px; max-width: 1000px; margin: 0 auto 14px; flex-wrap: wrap; }
+  nav button {
+    flex: 1; min-width: 140px; font-family: inherit; font-size: 1rem; font-weight: bold;
+    padding: 12px 8px; border: none; border-radius: 16px; cursor: pointer;
+    background: #e5e5ef; color: #77779a; box-shadow: 0 4px 0 #cfcfdd; transition: .1s;
+  }
+  nav button.active { background: #58cc02; color: #fff; box-shadow: 0 4px 0 #46a302; transform: translateY(1px); }
+  nav button:not(.active):hover { background: #dcdce8; }
+
+  main { max-width: 1000px; margin: 0 auto; display: flex; gap: 16px; align-items: flex-start; }
+  .bodycard {
+    background: #fff; border-radius: 24px; padding: 10px 6px; flex: 0 0 340px;
+    box-shadow: 0 4px 14px rgba(60,60,120,.12); position: sticky; top: 12px;
+  }
+  .panel {
+    flex: 1; background: #fff; border-radius: 24px; padding: 20px;
+    box-shadow: 0 4px 14px rgba(60,60,120,.12); min-height: 480px;
+  }
+  @media (max-width: 760px) {
+    main { flex-direction: column; }
+    .bodycard { position: static; flex: none; width: 100%; max-width: 320px; margin: 0 auto; }
+  }
+
+  svg { width: 100%; height: auto; display: block; max-height: 78vh; }
+  .boneg { cursor: pointer; }
+  .bone-el { transition: all .15s; }
+  .boneg:hover .bone-el { filter: brightness(1.15); }
+  .boneg.lit .bone-el { stroke: #ff9f1a !important; fill: #ff9f1a !important; filter: drop-shadow(0 0 6px #ff9f1a); animation: pulse 1s infinite; }
+  .boneg.lit path.bone-el, .boneg.lit circle.bone-el, .boneg.lit rect.bone-el { fill: #ff9f1a !important; }
+  .boneg.good .bone-el { stroke: #58cc02 !important; fill: #58cc02 !important; }
+  .boneg.bad  .bone-el { stroke: #ff4b4b !important; fill: #ff4b4b !important; }
+  @keyframes pulse { 50% { filter: drop-shadow(0 0 12px #ff9f1a); } }
+  svg.locked .boneg { cursor: default; }
+  svg.shake { animation: shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  .qtitle { font-size: 1.35rem; text-align: center; margin-bottom: 6px; }
+  .qword { font-size: 2rem; text-align: center; color: #1cb0f6; margin: 6px 0; font-weight: 800; }
+  .qhint { text-align: center; color: #8888a5; font-size: 1rem; min-height: 1.4em; margin-bottom: 10px; }
+  .progress { height: 14px; background: #e5e5ef; border-radius: 999px; overflow: hidden; margin: 10px 0 16px; }
+  .progress > div { height: 100%; background: #58cc02; border-radius: 999px; transition: width .3s; }
+
+  .bigbtn {
+    display: inline-block; font-family: inherit; font-size: 1.15rem; font-weight: bold;
+    padding: 14px 28px; border: none; border-radius: 16px; cursor: pointer; color: #fff;
+    background: #58cc02; box-shadow: 0 5px 0 #46a302; transition: .1s;
+  }
+  .bigbtn:active { transform: translateY(3px); box-shadow: 0 2px 0 #46a302; }
+  .bigbtn.blue { background: #1cb0f6; box-shadow: 0 5px 0 #1899d6; }
+  .bigbtn.blue:active { box-shadow: 0 2px 0 #1899d6; }
+  .bigbtn.grey { background: #e5e5ef; color: #77779a; box-shadow: 0 5px 0 #cfcfdd; }
+  .bigbtn.grey:active { box-shadow: 0 2px 0 #cfcfdd; }
+  .bigbtn:disabled { opacity: .45; cursor: default; }
+  .btnrow { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+
+  .speakbtn {
+    background: #1cb0f6; border: none; color: #fff; font-size: 1.3rem; cursor: pointer;
+    border-radius: 50%; width: 52px; height: 52px; box-shadow: 0 4px 0 #1899d6;
+  }
+  .speakbtn:active { transform: translateY(2px); box-shadow: 0 2px 0 #1899d6; }
+  .wordline { display: flex; align-items: center; justify-content: center; gap: 12px; }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  @media (max-width: 480px) { .choices { grid-template-columns: 1fr; } }
+  .choice {
+    font-family: inherit; font-size: 1.2rem; font-weight: bold; padding: 16px 10px;
+    border: 2px solid #e5e5ef; border-bottom-width: 5px; border-radius: 16px;
+    background: #fff; color: #3c3c50; cursor: pointer; transition: .1s;
+  }
+  .choice:hover { background: #f0f8ff; border-color: #1cb0f6; }
+  .choice.correct { background: #d7ffb8; border-color: #58cc02; color: #46a302; }
+  .choice.wrong { background: #ffdfe0; border-color: #ff4b4b; color: #ea2b2b; }
+  .choice:disabled { cursor: default; }
+
+  #typeInput {
+    font-family: inherit; font-size: 1.6rem; font-weight: bold; text-align: center;
+    width: 100%; max-width: 420px; padding: 14px; border: 3px solid #e5e5ef;
+    border-radius: 16px; outline: none; display: block; margin: 8px auto;
+  }
+  #typeInput:focus { border-color: #1cb0f6; }
+  #typeInput.ok { border-color: #58cc02; background: #f0fff0; }
+  #typeInput.ko { border-color: #ff4b4b; background: #fff5f5; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
+  .chip {
+    font-family: inherit; font-size: 1rem; font-weight: bold; padding: 8px 14px;
+    border: 2px solid #e5e5ef; border-radius: 999px; background: #fff; cursor: pointer;
+    color: #3c3c50; transition: .1s;
+  }
+  .chip:hover { border-color: #1cb0f6; background: #f0f8ff; }
+  .chip.active { background: #1cb0f6; border-color: #1cb0f6; color: #fff; }
+  .chip .stars { font-size: .75rem; display: block; color: #ffc800; }
+
+  .card {
+    background: #f7f9ff; border: 2px solid #e5e5ef; border-radius: 20px;
+    padding: 18px; text-align: center; margin-top: 12px;
+  }
+  .card h2 { color: #1cb0f6; font-size: 1.8rem; }
+  .card p { color: #55556e; margin-top: 6px; }
+
+  .feedback {
+    position: fixed; left: 50%; top: 18%; transform: translateX(-50%);
+    font-size: 2rem; font-weight: 800; padding: 14px 34px; border-radius: 20px;
+    color: #fff; z-index: 50; pointer-events: none; opacity: 0; transition: opacity .2s;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2); text-align: center;
+  }
+  .feedback.show { opacity: 1; }
+  .feedback.good { background: #58cc02; }
+  .feedback.bad { background: #ff4b4b; }
+
+  .confetti { position: fixed; top: -20px; font-size: 1.4rem; z-index: 60; pointer-events: none; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .6; } }
+
+  .endstars { font-size: 3rem; text-align: center; margin: 10px 0; }
+  .hidden { display: none !important; }
+  .infotext { text-align: center; color: #8888a5; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🦴 Les Os du Corps Humain <small>Deviens un champion du squelette !</small></h1>
+  <div class="scorebar">
+    <span class="pill xp" title="Ton expérience">⭐ <span id="xpVal">0</span> XP</span>
+    <span class="pill flame" title="Bonnes réponses d'affilée">🔥 <span id="streakVal">0</span></span>
+    <button id="resetBtn" title="Recommencer à zéro">🔄</button>
+  </div>
+</header>
+
+<nav>
+  <button data-mode="learn" class="active">🔍 Découvre</button>
+  <button data-mode="find">🎯 Trouve l'os</button>
+  <button data-mode="quiz">❓ Quiz</button>
+  <button data-mode="type">⌨️ Écris</button>
+</nav>
+
+<main>
+  <div class="bodycard">
+    <svg id="body" viewBox="0 0 220 420" aria-label="Squelette">
+      <g id="skeleton">
+
+        <!-- Crâne -->
+        <g class="boneg" data-bone="crane">
+          <circle class="bone-el" cx="110" cy="38" r="24" fill="#90a4ae" stroke="#78909c" stroke-width="3"/>
+          <path class="bone-el" d="M96 58 Q110 70 124 58" fill="none" stroke="#78909c" stroke-width="3" stroke-linecap="round"/>
+        </g>
+
+        <!-- Omoplates (derrière la cage) -->
+        <g class="boneg" data-bone="omoplate">
+          <path class="bone-el" d="M88 78 L70 90 L86 102 Z" fill="#b0bec5" stroke="#78909c" stroke-width="2"/>
+          <path class="bone-el" d="M132 78 L150 90 L134 102 Z" fill="#b0bec5" stroke="#78909c" stroke-width="2"/>
+        </g>
+
+        <!-- Colonne vertébrale -->
+        <g class="boneg" data-bone="colonne">
+          <rect class="hit" x="98" y="58" width="24" height="126" fill="transparent"/>
+          <g class="bone-el" fill="#90a4ae" stroke="#78909c" stroke-width="1">
+            <rect x="104" y="60" width="12" height="7" rx="3"/>
+            <rect x="104" y="70" width="12" height="7" rx="3"/>
+            <rect x="104" y="80" width="12" height="7" rx="3"/>
+            <rect x="104" y="90" width="12" height="7" rx="3"/>
+            <rect x="104" y="100" width="12" height="7" rx="3"/>
+            <rect x="104" y="110" width="12" height="7" rx="3"/>
+            <rect x="104" y="120" width="12" height="7" rx="3"/>
+            <rect x="104" y="130" width="12" height="7" rx="3"/>
+            <rect x="104" y="140" width="12" height="7" rx="3"/>
+            <rect x="104" y="150" width="12" height="7" rx="3"/>
+            <rect x="104" y="160" width="12" height="7" rx="3"/>
+            <rect x="104" y="170" width="12" height="7" rx="3"/>
+          </g>
+        </g>
+
+        <!-- Cage thoracique -->
+        <g class="boneg" data-bone="cage">
+          <path class="bone-el" d="M80 76 Q68 108 82 138 Q94 150 110 150 Q126 150 138 138 Q152 108 140 76 Q110 86 80 76 Z"
+                fill="rgba(144,164,174,.30)" stroke="#90a4ae" stroke-width="4"/>
+          <line class="bone-el" x1="110" y1="80" x2="110" y2="142" stroke="#90a4ae" stroke-width="4" stroke-linecap="round"/>
+        </g>
+
+        <!-- Côtes (par-dessus la cage) -->
+        <g class="boneg" data-bone="cote">
+          <path class="hit" d="M78 88 Q110 100 142 88" stroke="transparent" stroke-width="16" fill="none"/>
+          <path class="hit" d="M78 104 Q110 116 142 104" stroke="transparent" stroke-width="16" fill="none"/>
+          <path class="hit" d="M80 120 Q110 132 140 120" stroke="transparent" stroke-width="16" fill="none"/>
+          <path class="hit" d="M84 134 Q110 144 136 134" stroke="transparent" stroke-width="16" fill="none"/>
+          <g class="bone-el" stroke="#78909c" stroke-width="4" fill="none" stroke-linecap="round">
+            <path d="M78 88 Q110 100 142 88"/>
+            <path d="M78 104 Q110 116 142 104"/>
+            <path d="M80 120 Q110 132 140 120"/>
+            <path d="M84 134 Q110 144 136 134"/>
+          </g>
+        </g>
+
+        <!-- Clavicules -->
+        <g class="boneg" data-bone="clavicule">
+          <path class="hit" d="M84 74 Q95 66 105 70" stroke="transparent" stroke-width="14" fill="none"/>
+          <path class="hit" d="M136 74 Q125 66 115 70" stroke="transparent" stroke-width="14" fill="none"/>
+          <g class="bone-el" stroke="#b0bec5" stroke-width="6" fill="none" stroke-linecap="round">
+            <path d="M84 74 Q95 66 105 70"/>
+            <path d="M136 74 Q125 66 115 70"/>
+          </g>
+        </g>
+
+        <!-- Bras gauche (à gauche de l'image) -->
+        <g class="boneg" data-bone="humerus" data-limb="bras">
+          <line class="hit" x1="86" y1="76" x2="66" y2="130" stroke="transparent" stroke-width="18"/>
+          <line class="bone-el" x1="86" y1="76" x2="66" y2="130" stroke="#90a4ae" stroke-width="7" stroke-linecap="round"/>
+        </g>
+        <g class="boneg" data-bone="radius" data-limb="bras">
+          <line class="hit" x1="66" y1="130" x2="50" y2="178" stroke="transparent" stroke-width="14"/>
+          <line class="bone-el" x1="66" y1="130" x2="50" y2="178" stroke="#b0bec5" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <g class="boneg" data-bone="cubitus" data-limb="bras">
+          <line class="hit" x1="66" y1="130" x2="63" y2="178" stroke="transparent" stroke-width="12"/>
+          <line class="bone-el" x1="66" y1="130" x2="63" y2="178" stroke="#78909c" stroke-width="4.5" stroke-linecap="round"/>
+        </g>
+
+        <!-- Bras droit -->
+        <g class="boneg" data-bone="humerus" data-limb="bras">
+          <line class="hit" x1="134" y1="76" x2="154" y2="130" stroke="transparent" stroke-width="18"/>
+          <line class="bone-el" x1="134" y1="76" x2="154" y2="130" stroke="#90a4ae" stroke-width="7" stroke-linecap="round"/>
+        </g>
+        <g class="boneg" data-bone="radius" data-limb="bras">
+          <line class="hit" x1="154" y1="130" x2="170" y2="178" stroke="transparent" stroke-width="14"/>
+          <line class="bone-el" x1="154" y1="130" x2="170" y2="178" stroke="#b0bec5" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <g class="boneg" data-bone="cubitus" data-limb="bras">
+          <line class="hit" x1="154" y1="130" x2="157" y2="178" stroke="transparent" stroke-width="12"/>
+          <line class="bone-el" x1="154" y1="130" x2="157" y2="178" stroke="#78909c" stroke-width="4.5" stroke-linecap="round"/>
+        </g>
+
+        <!-- Mains : phalanges -->
+        <g class="boneg" data-bone="phalanges" data-limb="bras">
+          <rect class="hit" x="40" y="172" width="34" height="30" fill="transparent"/>
+          <rect class="hit" x="146" y="172" width="34" height="30" fill="transparent"/>
+          <g class="bone-el" fill="#b0bec5" stroke="#78909c" stroke-width="1.5">
+            <circle cx="50" cy="182" r="7"/><circle cx="70" cy="182" r="7"/>
+            <circle cx="45" cy="194" r="3"/><circle cx="50" cy="196" r="3"/><circle cx="55" cy="195" r="3"/><circle cx="59" cy="192" r="3"/>
+            <circle cx="170" cy="182" r="7"/><circle cx="150" cy="182" r="7"/>
+            <circle cx="161" cy="192" r="3"/><circle cx="165" cy="195" r="3"/><circle cx="170" cy="196" r="3"/><circle cx="175" cy="194" r="3"/>
+          </g>
+        </g>
+
+        <!-- Bassin -->
+        <g class="boneg" data-bone="bassin">
+          <path class="bone-el" d="M90 178 Q82 204 96 212 L124 212 Q138 204 130 178 Q110 192 90 178 Z"
+                fill="#90a4ae" stroke="#78909c" stroke-width="3"/>
+          <circle class="bone-el" cx="94" cy="212" r="6" fill="#78909c"/>
+          <circle class="bone-el" cx="126" cy="212" r="6" fill="#78909c"/>
+        </g>
+
+        <!-- Jambes : fémurs -->
+        <g class="boneg" data-bone="femur" data-limb="jambe">
+          <line class="hit" x1="94" y1="212" x2="88" y2="292" stroke="transparent" stroke-width="20"/>
+          <line class="hit" x1="126" y1="212" x2="132" y2="292" stroke="transparent" stroke-width="20"/>
+          <line class="bone-el" x1="94" y1="212" x2="88" y2="292" stroke="#90a4ae" stroke-width="8" stroke-linecap="round"/>
+          <line class="bone-el" x1="126" y1="212" x2="132" y2="292" stroke="#90a4ae" stroke-width="8" stroke-linecap="round"/>
+        </g>
+
+        <!-- Tibias -->
+        <g class="boneg" data-bone="tibia" data-limb="jambe">
+          <line class="hit" x1="88" y1="296" x2="86" y2="370" stroke="transparent" stroke-width="16"/>
+          <line class="hit" x1="132" y1="296" x2="134" y2="370" stroke="transparent" stroke-width="16"/>
+          <line class="bone-el" x1="88" y1="296" x2="86" y2="370" stroke="#90a4ae" stroke-width="7" stroke-linecap="round"/>
+          <line class="bone-el" x1="132" y1="296" x2="134" y2="370" stroke="#90a4ae" stroke-width="7" stroke-linecap="round"/>
+        </g>
+
+        <!-- Péronés -->
+        <g class="boneg" data-bone="perone" data-limb="jambe">
+          <line class="hit" x1="96" y1="298" x2="95" y2="368" stroke="transparent" stroke-width="12"/>
+          <line class="hit" x1="124" y1="298" x2="125" y2="368" stroke="transparent" stroke-width="12"/>
+          <line class="bone-el" x1="96" y1="298" x2="95" y2="368" stroke="#b0bec5" stroke-width="3.5" stroke-linecap="round"/>
+          <line class="bone-el" x1="124" y1="298" x2="125" y2="368" stroke="#b0bec5" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+
+        <!-- Pieds : phalanges -->
+        <g class="boneg" data-bone="phalanges" data-limb="jambe">
+          <rect class="hit" x="70" y="368" width="34" height="24" fill="transparent"/>
+          <rect class="hit" x="116" y="368" width="34" height="24" fill="transparent"/>
+          <g class="bone-el" fill="#b0bec5" stroke="#78909c" stroke-width="1.5">
+            <ellipse cx="83" cy="376" rx="10" ry="6"/>
+            <ellipse cx="137" cy="376" rx="10" ry="6"/>
+            <circle cx="76" cy="384" r="2.5"/><circle cx="81" cy="386" r="2.5"/><circle cx="86" cy="386" r="2.5"/><circle cx="90" cy="384" r="2.5"/>
+            <circle cx="130" cy="384" r="2.5"/><circle cx="134" cy="386" r="2.5"/><circle cx="139" cy="386" r="2.5"/><circle cx="144" cy="384" r="2.5"/>
+          </g>
+        </g>
+
+      </g>
+    </svg>
+  </div>
+
+  <div class="panel" id="panel"></div>
+</main>
+
+<div class="feedback" id="feedback"></div>
+
+<script>
+"use strict";
+
+const BONES = [
+  { id: "crane",      name: "crâne",              find: true,  hint: "L'os de la tête, il protège ton cerveau !" },
+  { id: "cage",       name: "cage thoracique",    find: true,  hint: "Elle protège le cœur et les poumons." },
+  { id: "colonne",    name: "colonne vertébrale", find: true,  hint: "Elle te tient tout droit, dans le dos." },
+  { id: "bassin",     name: "bassin",             find: true,  hint: "À la hauteur des hanches." },
+  { id: "clavicule",  name: "clavicule",          find: true,  hint: "L'os entre le cou et l'épaule." },
+  { id: "omoplate",   name: "omoplate",           find: true,  hint: "L'os plat dans le dos, sous l'épaule." },
+  { id: "humerus",    name: "humérus",            find: true,  hint: "L'os du bras, entre l'épaule et le coude." },
+  { id: "radius",     name: "radius",             find: true,  hint: "Os de l'avant-bras, du côté du pouce." },
+  { id: "cubitus",    name: "cubitus",            find: true,  hint: "Os de l'avant-bras, du côté du petit doigt." },
+  { id: "phalanges",  name: "phalanges",          find: true,  hint: "Les os des doigts et des orteils !" },
+  { id: "cote",       name: "côte",               find: true,  hint: "Tu en as 24, elles forment la poitrine." },
+  { id: "femur",      name: "fémur",              find: true,  hint: "L'os le plus long du corps !" },
+  { id: "tibia",      name: "tibia",              find: true,  hint: "Le gros os de la jambe, devant." },
+  { id: "perone",     name: "péroné",             find: true,  hint: "Le petit os de la jambe, à côté du tibia.", alt: ["fibula", "peronne"] },
+  { id: "bras",       name: "bras",               find: false, hint: "Tout ce qui va de l'épaule à la main." },
+  { id: "jambe",      name: "jambe",              find: false, hint: "Tout ce qui va de la hanche au pied." }
+];
+const byId = {};
+BONES.forEach(b => byId[b.id] = b);
+
+/* ---------- État sauvegardé ---------- */
+let store = loadStore();
+function loadStore() {
+  try {
+    const s = JSON.parse(localStorage.getItem("os-squelette") || "{}");
+    return { xp: s.xp || 0, streak: s.streak || 0, stars: s.stars || {} };
+  } catch (e) { return { xp: 0, streak: 0, stars: {} }; }
+}
+function saveStore() { localStorage.setItem("os-squelette", JSON.stringify(store)); }
+
+/* ---------- Sons ---------- */
+let audioCtx = null;
+function tone(freq, start, dur, type) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type || "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.12, audioCtx.currentTime + start);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(audioCtx.currentTime + start); o.stop(audioCtx.currentTime + start + dur);
+  } catch (e) {}
+}
+function soundGood() { tone(523, 0, .15); tone(659, .1, .15); tone(784, .2, .3); }
+function soundBad()  { tone(180, 0, .3, "sawtooth"); }
+function soundWin()  { [523,659,784,1047].forEach((f,i)=>tone(f, i*.12, .3)); }
+
+/* ---------- Voix ---------- */
+function speak(text) {
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "fr-FR"; u.rate = 0.85;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* ---------- Utilitaires SVG ---------- */
+const svg = document.getElementById("body");
+function litBone(id, cls) {
+  clearLit();
+  if (id === "bras" || id === "jambe") {
+    svg.querySelectorAll('[data-limb="' + id + '"]').forEach(g => g.classList.add(cls || "lit"));
+  } else {
+    svg.querySelectorAll('[data-bone="' + id + '"]').forEach(g => g.classList.add(cls || "lit"));
+  }
+}
+function clearLit() { svg.querySelectorAll(".boneg").forEach(g => g.classList.remove("lit", "good", "bad")); }
+function setBonesInteractive(on) {
+  svg.classList.toggle("locked", !on);
+  svg.querySelectorAll(".boneg").forEach(g => { g.style.pointerEvents = on ? "auto" : "none"; });
+}
+
+/* ---------- Feedback ---------- */
+const feedbackEl = document.getElementById("feedback");
+let fbTimer = null;
+function showFeedback(text, good) {
+  feedbackEl.textContent = text;
+  feedbackEl.className = "feedback show " + (good ? "good" : "bad");
+  clearTimeout(fbTimer);
+  fbTimer = setTimeout(() => feedbackEl.classList.remove("show"), 1600);
+}
+function confetti() {
+  const emojis = ["🎉", "⭐", "🦴", "✨", "🎊", "💛"];
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = (1.5 + Math.random() * 1.5) + "s";
+    el.style.animationDelay = (Math.random() * .4) + "s";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+}
+
+/* ---------- XP / étoiles ---------- */
+function updateHeader() {
+  document.getElementById("xpVal").textContent = store.xp;
+  document.getElementById("streakVal").textContent = store.streak;
+}
+function addXP(n) { store.xp += n; saveStore(); updateHeader(); }
+function starProgress(id) { return store.stars[id] || 0; }
+function addStarProgress(id, inc) {
+  const before = Math.min(3, Math.floor((store.stars[id] || 0) / 3));
+  store.stars[id] = (store.stars[id] || 0) + inc;
+  const after = Math.min(3, Math.floor(store.stars[id] / 3));
+  saveStore();
+  if (after > before) { confetti(); showFeedback("Nouvelle étoile ! ⭐", true); }
+}
+
+/* ---------- Normalisation du texte ---------- */
+function normalize(s) {
+  return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z ]/g, "").replace(/\s+/g, " ").trim();
+}
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const d = Array.from({ length: m + 1 }, (_, i) => [i].concat(Array(n).fill(0)));
+  for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[m][n];
+}
+function checkSpelling(input, bone) {
+  const guess = normalize(input);
+  if (!guess) return false;
+  const target = normalize(bone.name);
+  if (guess === target) return true;
+  if ((bone.alt || []).some(a => guess === normalize(a))) return true;
+  const tol = target.length >= 8 ? 2 : (target.length >= 4 ? 1 : 0);
+  return levenshtein(guess, target) <= tol;
+}
+
+/* ---------- Navigation ---------- */
+let mode = "learn";
+const panel = document.getElementById("panel");
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    mode = btn.dataset.mode;
+    startMode();
+  });
+});
+
+function startMode() {
+  clearLit();
+  if (mode === "learn") renderLearn();
+  else if (mode === "find") startFind();
+  else if (mode === "quiz") startQuiz();
+  else if (mode === "type") startType();
+}
+
+/* ================= MODE DÉCOUVRE ================= */
+function renderLearn() {
+  setBonesInteractive(true);
+  let html = `
+    <h2 class="qtitle">🔍 Touche un os pour le découvrir !</h2>
+    <p class="infotext">Clique sur le squelette ou sur les mots ci-dessous. Gagne 3 bonnes réponses par os pour avoir 3 étoiles ⭐</p>
+    <div class="card" id="learnCard">
+      <div class="wordline"><h2 id="learnName">Squelette</h2>
+      <button class="speakbtn" id="learnSpeak">🔊</button></div>
+      <p id="learnHint">Choisis un os et écoute son nom.</p>
+    </div>
+    <div class="chips" id="chips"></div>`;
+  panel.innerHTML = html;
+
+  const chips = panel.querySelector("#chips");
+  BONES.forEach(b => {
+    const c = document.createElement("button");
+    c.className = "chip";
+    c.dataset.id = b.id;
+    renderChipStars(c, b.id);
+    c.appendChild(document.createTextNode(b.name));
+    c.addEventListener("click", () => selectBone(b.id));
+    chips.appendChild(c);
+  });
+
+  panel.querySelector("#learnSpeak").addEventListener("click", () => {
+    const cur = panel.querySelector("#learnName").dataset.id;
+    if (cur) speak(byId[cur].name);
+  });
+
+  svg.onclick = (e) => {
+    const g = e.target.closest("[data-bone]");
+    if (g) selectBone(g.dataset.bone);
+  };
+}
+function renderChipStars(chip, id) {
+  let old = chip.querySelector(".stars");
+  if (old) old.remove();
+  const s = document.createElement("span");
+  s.className = "stars";
+  const n = Math.min(3, Math.floor(starProgress(id) / 3));
+  s.textContent = "⭐".repeat(n) + "☆".repeat(3 - n);
+  chip.prepend(s);
+}
+function selectBone(id) {
+  const b = byId[id];
+  litBone(id);
+  const nameEl = panel.querySelector("#learnName");
+  if (!nameEl) return;
+  nameEl.textContent = b.name.charAt(0).toUpperCase() + b.name.slice(1);
+  nameEl.dataset.id = id;
+  panel.querySelector("#learnHint").textContent = b.hint;
+  panel.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c.dataset.id === id));
+  speak(b.name);
+}
+
+/* ================= MODE TROUVE L'OS ================= */
+let findState = null;
+function startFind() {
+  setBonesInteractive(true);
+  const pool = BONES.filter(b => b.find).map(b => b.id);
+  const queue = shuffle(pool).slice(0, 10);
+  findState = { queue, idx: 0, score: 0, tries: 0 };
+  renderFindQuestion();
+}
+function renderFindQuestion() {
+  const st = findState;
+  clearLit();
+  if (st.idx >= st.queue.length) return endGame(st.score, st.queue.length);
+  const target = st.queue[st.idx];
+  st.tries = 0;
+  panel.innerHTML = `
+    <h2 class="qtitle">🎯 Trouve l'os sur le squelette !</h2>
+    <div class="progress"><div style="width:${(st.idx / st.queue.length) * 100}%"></div></div>
+    <p class="infotext">Question ${st.idx + 1} / ${st.queue.length} &nbsp;•&nbsp; Score : ${st.score}</p>
+    <div class="wordline" style="justify-content:center">
+      <div class="qword">${byId[target].name}</div>
+      <button class="speakbtn" id="findSpeak">🔊</button>
+    </div>
+    <p class="qhint">💡 ${byId[target].hint}</p>`;
+  panel.querySelector("#findSpeak").addEventListener("click", () => speak(byId[target].name));
+  speak(byId[target].name);
+  svg.onclick = (e) => {
+    const g = e.target.closest("[data-bone]");
+    if (!g) return;
+    answerFind(g.dataset.bone, target);
+  };
+}
+function answerFind(clicked, target) {
+  const st = findState;
+  if (clicked === target) {
+    litBone(clicked, "good");
+    soundGood(); confetti();
+    st.score++; addXP(10); addStarProgress(target, 1);
+    store.streak++; saveStore(); updateHeader();
+    showFeedback(["Bravo ! 🎉", "Super ! ⭐", "Génial ! 🦴", "Parfait ! 💪"][Math.floor(Math.random()*4)], true);
+    st.idx++;
+    setTimeout(renderFindQuestion, 1100);
+  } else {
+    st.tries++;
+    store.streak = 0; saveStore(); updateHeader();
+    soundBad();
+    svg.classList.add("shake");
+    setTimeout(() => svg.classList.remove("shake"), 450);
+    litBone(clicked, "bad");
+    setTimeout(() => clearLit(), 600);
+    if (st.tries >= 2) {
+      showFeedback("C'était : " + byId[target].name, false);
+      litBone(target, "good");
+      st.idx++;
+      setTimeout(renderFindQuestion, 1800);
+    } else {
+      showFeedback("Essaie encore ! 😉", false);
+    }
+  }
+}
+
+/* ================= MODE QUIZ ================= */
+let quizState = null;
+function startQuiz() {
+  setBonesInteractive(false);
+  const pool = BONES.map(b => b.id);
+  const queue = shuffle(pool).slice(0, 10);
+  quizState = { queue, idx: 0, score: 0 };
+  renderQuizQuestion();
+}
+function renderQuizQuestion() {
+  const st = quizState;
+  clearLit();
+  if (st.idx >= st.queue.length) return endGame(st.score, st.queue.length);
+  const target = st.queue[st.idx];
+  litBone(target);
+  const choices = shuffle([target, ...shuffle(BONES.filter(b => b.id !== target).map(b => b.id)).slice(0, 3)]);
+  panel.innerHTML = `
+    <h2 class="qtitle">❓ Quel est cet os ?</h2>
+    <div class="progress"><div style="width:${(st.idx / st.queue.length) * 100}%"></div></div>
+    <p class="infotext">Question ${st.idx + 1} / ${st.queue.length} &nbsp;•&nbsp; Score : ${st.score}</p>
+    <div class="choices"></div>`;
+  const box = panel.querySelector(".choices");
+  choices.forEach(id => {
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = byId[id].name;
+    btn.addEventListener("click", () => {
+      Array.from(box.children).forEach(b => b.disabled = true);
+      if (id === target) {
+        btn.classList.add("correct");
+        soundGood(); confetti();
+        st.score++; addXP(10); addStarProgress(target, 1);
+        store.streak++; saveStore(); updateHeader();
+        showFeedback("Bravo ! 🎉", true);
+        speak("Oui ! " + byId[target].name);
+      } else {
+        btn.classList.add("wrong");
+        box.querySelectorAll(".choice").forEach(b => { if (b.textContent === byId[target].name) b.classList.add("correct"); });
+        soundBad();
+        store.streak = 0; saveStore(); updateHeader();
+        showFeedback("C'était : " + byId[target].name, false);
+        speak("C'était " + byId[target].name);
+      }
+      st.idx++;
+      setTimeout(renderQuizQuestion, 1600);
+    });
+    box.appendChild(btn);
+  });
+  speak("Quel est cet os ?");
+}
+
+/* ================= MODE ÉCRIS ================= */
+let typeState = null;
+function startType() {
+  setBonesInteractive(false);
+  const pool = BONES.filter(b => b.find).map(b => b.id);
+  const queue = shuffle(pool);
+  typeState = { queue, idx: 0, score: 0, hints: 0 };
+  renderTypeQuestion();
+}
+function renderTypeQuestion() {
+  const st = typeState;
+  clearLit();
+  if (st.idx >= st.queue.length) return endGame(st.score, st.queue.length);
+  const target = st.queue[st.idx];
+  litBone(target);
+  panel.innerHTML = `
+    <h2 class="qtitle">⌨️ Écris le nom de cet os</h2>
+    <div class="progress"><div style="width:${(st.idx / st.queue.length) * 100}%"></div></div>
+    <p class="infotext">Question ${st.idx + 1} / ${st.queue.length} &nbsp;•&nbsp; Score : ${st.score} &nbsp;•&nbsp; Les accents ne comptent pas 😉</p>
+    <input id="typeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+           placeholder="Tape ici… (aide : ${byId[target].name.length} lettres)">
+    <div class="btnrow">
+      <button class="bigbtn blue" id="typeCheck">✅ Vérifier</button>
+      <button class="bigbtn grey" id="typeHint">💡 Indice</button>
+      <button class="bigbtn grey" id="typeSkip">⏭️ Passer</button>
+    </div>
+    <p class="qhint" id="typeHintText"></p>`;
+  const input = panel.querySelector("#typeInput");
+  const hintText = panel.querySelector("#typeHintText");
+  speak("Écris le nom de cet os");
+  input.focus();
+
+  const name = byId[target].name;
+  let revealed = 0;
+  panel.querySelector("#typeCheck").addEventListener("click", check);
+  input.addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+  panel.querySelector("#typeHint").addEventListener("click", () => {
+    revealed++;
+    st.hints++;
+    hintText.textContent = "💡 " + name.slice(0, revealed) + "…";
+    input.focus();
+  });
+  panel.querySelector("#typeSkip").addEventListener("click", () => {
+    store.streak = 0; saveStore(); updateHeader();
+    showFeedback("C'était : " + name, false);
+    st.idx++;
+    setTimeout(renderTypeQuestion, 1200);
+  });
+
+  function check() {
+    const val = input.value;
+    if (!normalize(val)) return;
+    if (checkSpelling(val, byId[target])) {
+      input.classList.add("ok");
+      soundGood(); confetti();
+      st.score++; addXP(15); addStarProgress(target, 1);
+      store.streak++; saveStore(); updateHeader();
+      showFeedback("Bravo ! 🎉", true);
+      speak(name);
+      st.idx++;
+      setTimeout(renderTypeQuestion, 1100);
+    } else {
+      input.classList.add("ko");
+      soundBad();
+      store.streak = 0; saveStore(); updateHeader();
+      showFeedback("Presque ! Réessaie 😊", false);
+      setTimeout(() => input.classList.remove("ko"), 600);
+      input.select();
+    }
+  }
+}
+
+/* ================= FIN DE PARTIE ================= */
+function endGame(score, total) {
+  clearLit();
+  setBonesInteractive(false);
+  const pct = total ? score / total : 0;
+  let msg, emoji;
+  if (pct === 1) { msg = "Parfait ! Tu es un champion des os !"; emoji = "🏆"; }
+  else if (pct >= .7) { msg = "Très bien ! Continue comme ça !"; emoji = "🥇"; }
+  else if (pct >= .4) { msg = "Bien joué ! Encore un effort !"; emoji = "💪"; }
+  else { msg = "Ce n'est pas grave, on réessaie !"; emoji = "😊"; }
+  addXP(5); soundWin(); confetti();
+  panel.innerHTML = `
+    <div class="card">
+      <div style="font-size:4rem">${emoji}</div>
+      <h2>${score} / ${total}</h2>
+      <p>${msg}</p>
+      <div class="endstars">${"⭐".repeat(Math.round(pct * 3))}${"☆".repeat(3 - Math.round(pct * 3))}</div>
+      <div class="btnrow">
+        <button class="bigbtn" id="replay">🔁 Rejouer</button>
+        <button class="bigbtn blue" id="learnAgain">🔍 Réviser les os</button>
+      </div>
+    </div>`;
+  panel.querySelector("#replay").addEventListener("click", startMode);
+  panel.querySelector("#learnAgain").addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.mode === "learn"));
+    mode = "learn"; startMode();
+  });
+}
+
+/* ---------- Divers ---------- */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (confirm("Tu veux vraiment tout recommencer à zéro ?")) {
+    store = { xp: 0, streak: 0, stars: {} };
+    saveStore(); updateHeader(); startMode();
+  }
+});
+updateHeader();
+startMode();
+</script>
+</body>
+</html>
